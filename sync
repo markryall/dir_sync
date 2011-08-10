@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+$: << File.dirname(__FILE__)+'/lib'
+
+require 'folder_synchroniser'
+
+left = ARGV.shift
+right = ARGV.shift
+history = ARGV.shift
+
+raise "Please define both LEFT and RIGHT folders and a PREVIOUS path" unless left and right and history
+
+FolderSynchroniser.new(left, right, history).execute
