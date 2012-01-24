@@ -55,6 +55,12 @@ describe ChangeResolver do
       @resolver.dispatch.should == :both_equal
     end
 
+    it 'should resolve equal when name and timestamps are within tolerance' do
+      relative  :left => 'a', :right => 'a'
+      timestamp :left => 99, :right => 101
+      @resolver.dispatch.should == :both_equal
+    end
+
     it 'should resolve left_modified when names are equal and left is more recent' do
       relative  :left => 'a', :right => 'a'
       timestamp :left => 200, :right => 100

@@ -5,7 +5,8 @@ require 'FileUtils'
 
 class FolderSynchroniser
   IGNORE_PATTERNS = [
-    /\.DS_Store$/
+    /\.DS_Store$/,
+    /\._/
   ]
 
   def initialize left, right, previous

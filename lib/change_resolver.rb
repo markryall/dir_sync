@@ -1,4 +1,6 @@
 class ChangeResolver
+  TOLERANCE = 5
+
   def initialize left, right, history
     @left, @right, @history = left, right, history
   end
@@ -35,19 +37,19 @@ private
   attr_reader :left, :right, :history
 
   def left_newer_than_history?
-    left.timestamp > history.timestamp
+    left.timestamp - history.timestamp > TOLERANCE
   end
 
   def right_newer_than_history?
-    right.timestamp > history.timestamp
+    right.timestamp - history.timestamp > TOLERANCE
   end
 
   def left_newer_than_right?
-    left.timestamp > right.timestamp
+    left.timestamp - right.timestamp > TOLERANCE
   end
 
   def right_newer_than_left?
-    right.timestamp > left.timestamp
+    right.timestamp - left.timestamp > TOLERANCE
   end
 
   def left_equal_to_right?
