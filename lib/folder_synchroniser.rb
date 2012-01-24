@@ -102,7 +102,7 @@ private
     puts "rm \"#{path}\""
   end
 
-  def mkdir
+  def mkdir path
     puts "mkdir -p \"#{path}\""
   end
 
