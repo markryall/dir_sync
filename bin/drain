@@ -13,5 +13,5 @@ loop do
   break if lines.empty?
   lines.shift.tap {|s| puts "> #{s}" }.tap {|s| puts `#{s}` }
   File.open("#{file}.tmp", 'w') {|f| f.puts lines.join "\n" }
-  `mv #{file}.tmp file`
+  `mv #{file}.tmp #{file}`
 end
