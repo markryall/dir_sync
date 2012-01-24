@@ -14,7 +14,4 @@ left = ARGV.shift
 right = ARGV.shift
 history = ARGV.shift
 
-puts "# Synchronising #{left} and #{right}"
-puts "#  using #{history}" if history
-
 FolderSynchroniser.new(left, right, history).execute
