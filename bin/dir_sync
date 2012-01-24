@@ -1,12 +1,11 @@
 #!/usr/bin/env ruby
 
-$: << File.dirname(__FILE__)+'/lib'
+$: << File.dirname(__FILE__)+'/../lib'
 
 require 'folder_synchroniser'
 
-unless ARGV.size == 3
-  puts "usage: #{__FILE__} left right history"
-  puts " set SKIP_CONFIRMATION or all actions will require confirmation"
+unless ARGV.size > 1
+  puts "usage: #{__FILE__} left right [history]"
   puts " set DEBUG for verbose output"
   exit 1
 end
@@ -15,7 +14,7 @@ left = ARGV.shift
 right = ARGV.shift
 history = ARGV.shift
 
-puts "Synchronising #{left} and #{right}"
-puts "  using #{history}" if history
+puts "# Synchronising #{left} and #{right}"
+puts "#  using #{history}" if history
 
 FolderSynchroniser.new(left, right, history).execute
