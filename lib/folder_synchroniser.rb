@@ -20,6 +20,12 @@ class FolderSynchroniser
 
   def both_equal
     report left
+    progress_left
+    progress_right
+  end
+
+  def all_equal
+    report left
     progress_all
   end
 
@@ -27,6 +33,10 @@ class FolderSynchroniser
     puts "# Both of the following have changed - please resolve manually:\n\t#{left.current}\n\t#{right.current}"
     report old
     progress_all
+  end
+
+  def both_removed
+    progress_old
   end
 
   def left_deleted

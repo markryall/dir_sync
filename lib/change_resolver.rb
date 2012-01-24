@@ -9,7 +9,9 @@ class ChangeResolver
     return :finished if left.empty? and right.empty?
 
     unless history.empty?
-      return :both_modified if left_equal_to_right? and left_newer_than_history? and right_newer_than_history?
+      return :both_removed if left_ahead_of_history? and right_ahead_of_history?
+
+      return :both_modified if left_equal_to_right? and left_equal_to_history? and left_newer_than_history? and right_newer_than_history?
 
       return :left_deleted if right_equal_to_history? and left.empty?
       return :right_deleted if left_equal_to_history? and right.empty?
@@ -29,6 +31,7 @@ class ChangeResolver
 
     return :left_modified if left_equal_to_right? and left_newer_than_right?
     return :right_modified if left_equal_to_right? and right_newer_than_left?
+    return :all_equal if left_equal_to_right? and !history.empty? and left_equal_to_history?
     return :both_equal if left_equal_to_right?
 
     raise 'not sure how to handle this situation'
@@ -54,6 +57,14 @@ private
 
   def left_equal_to_right?
     left.relative == right.relative
+  end
+
+  def left_ahead_of_history?
+    left.relative > history.relative
+  end
+
+  def right_ahead_of_history?
+    right.relative > history.relative
   end
 
   def left_ahead_of_right?
