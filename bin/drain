@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+if ARGV.empty?
+  puts "Runs a set of single line commands one by one (so that you can interrupt and the script will resume)"
+  puts "usage: #{__FILE__} script"
+  exit 1
+end
+
+file = ARGV.shift
+lines = File.readlines(file).map {|s| s.chomp.strip }.select {|s| !s.empty?}
+
+loop do
+  break if lines.empty?
+  lines.shift.tap {|s| puts "> #{s}" }.tap {|s| puts `#{s}` }
+  File.open("#{file}.tmp", 'w') {|f| f.puts lines.join "\n" }
+  `mv #{file}.tmp file`
+end
