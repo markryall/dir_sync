@@ -121,6 +121,9 @@ private
     puts "cp -p \"#{from}\" \"#{to}\""
   end
 
+  def finished
+  end
+
   def remove_right
     rm right.current
   end
@@ -158,7 +161,7 @@ private
   def progress_left
     left.next
   end
-  
+
   def progress_right
     right.next
   end
