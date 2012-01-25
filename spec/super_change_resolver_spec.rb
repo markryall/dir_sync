@@ -9,8 +9,11 @@ describe SuperChangeResolver do
 
   def stub_traversers hashes
     hashes.each_with_index do |traverser_stubs, index|
-      traverser_stubs.each do |meth,ret|
-        traversers << stub("traverser#{index}").tap {|t| t.stub!(meth).and_return ret }
+      stubs = { ts: 0 }.merge traverser_stubs
+      traversers << stub("traverser#{index}").tap do |traverser|
+        stubs.each do |meth,ret|
+           traverser.stub!(meth).and_return ret
+        end
       end
     end
   end
@@ -33,6 +36,22 @@ describe SuperChangeResolver do
     resolver.candidate.should == traversers[2]
   end
 
-  it 'should determine the next candidate for the same name by earliest timestamp'
+  it 'should determine the next candidate for the same name by most recent timestamp' do
+    stub_traversers [
+      { name: 'a', ts: 10},
+      { name: 'a', ts: 20},
+      { name: 'b'},
+    ]
+    resolver.candidate.should == traversers[1]
+  end
+
+  it 'should determine the next candidate for the same name by most recent timestamp' do
+    stub_traversers [
+      { name: 'a', ts: 20},
+      { name: 'a', ts: 10},
+      { name: 'b'},
+    ]
+    resolver.candidate.should == traversers[0]
+  end
   it 'should determine the next candidate for the same name and timestamp favouring non historical'
 end

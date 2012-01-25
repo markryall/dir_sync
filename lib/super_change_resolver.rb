@@ -5,7 +5,12 @@ class SuperChangeResolver
 
   def candidate
     @traversers.sort do |left,right|
-      left.name <=> right.name
+      combine left.name <=> right.name, right.ts <=> left.ts
     end.first
+  end
+
+  def combine *exps
+    exps.each { |exp| return exp unless exp == 0 }
+    0
   end
 end
