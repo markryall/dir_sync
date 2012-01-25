@@ -19,6 +19,7 @@ describe SuperChangeResolver do
       traversers << stub("traverser#{index}").tap do |traverser|
         traverser.stub! :cp
         traverser.stub! :advance
+        traverser.stub! :ignored?
         stubs.each do |meth,ret|
            traverser.stub!(meth).and_return ret
         end
@@ -37,6 +38,16 @@ describe SuperChangeResolver do
       { name: 'c'},
     ]
     traversers[0].should_receive(:cp).with traversers[1], traversers[2]
+    resolver.iterate
+  end
+
+  it 'should remove files that are ignored' do
+    stub_traversers [
+      { name: 'a', ignored?: true},
+      { name: 'b'},
+      { name: 'c'},
+    ]
+    traversers[0].should_receive :rm
     resolver.iterate
   end
 

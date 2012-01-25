@@ -5,7 +5,7 @@ class SuperChangeResolver
 
   def iterate
     first, *rest = candidates
-    first.cp *rest
+    first.ignored? ? first.rm : first.cp(*rest)
     advance_matching_traversers first, @history, *@traversers
   end
 
