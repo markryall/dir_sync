@@ -20,6 +20,7 @@ describe SuperChangeResolver do
         traverser.stub! :cp
         traverser.stub! :advance
         traverser.stub! :ignored?
+        traverser.stub! :empty?
         stubs.each do |meth,ret|
            traverser.stub!(meth).and_return ret
         end
@@ -31,45 +32,65 @@ describe SuperChangeResolver do
     resolver.candidates.first
   end
 
-  it 'should copy all other traversers to candidate' do
-    stub_traversers [
-      { name: 'a'},
-      { name: 'b'},
-      { name: 'c'},
-    ]
-    traversers[0].should_receive(:cp).with traversers[1], traversers[2]
-    resolver.iterate
-  end
+  describe '#iterate' do
+    it 'should return true if any traverser is not empty' do
+      stub_traversers [
+        { name: 'a'},
+        { name: 'a'}
+      ]
+      resolver.iterate.should be_true
+    end
 
-  it 'should remove files that are ignored' do
-    stub_traversers [
-      { name: 'a', ignored?: true},
-      { name: 'b'},
-      { name: 'c'},
-    ]
-    traversers[0].should_receive :rm
-    resolver.iterate
-  end
+    it 'should return false if all traversers are empty' do
+      stub_traversers [
+        { name: 'a'},
+        { name: 'b'}
+      ]
+      traversers[0].should_receive(:empty?).and_return true
+      traversers[1].should_receive(:empty?).and_return true
+      resolver.iterate.should be_false
+    end
 
-  it 'should advance history when it has candidate name' do
-    stub_history name: 'a'
-    stub_traversers [{ name: 'a'}, { name: 'b'}]
-    history.should_receive :advance
-    resolver.iterate
-  end
+    it 'should copy all other traversers to candidate' do
+      stub_traversers [
+        { name: 'a'},
+        { name: 'b'},
+        { name: 'c'},
+      ]
+      traversers[0].should_receive(:cp).with traversers[1], traversers[2]
+      resolver.iterate
+    end
 
-  it 'should advance traversers with the candidate name' do
-    stub_history name: 'b'
-    stub_traversers [
-      { name: 'a'},
-      { name: 'a'},
-      { name: 'b'},
-    ]
-    history.should_not_receive :advance
-    traversers[0].should_receive :advance
-    traversers[1].should_receive :advance
-    traversers[2].should_not_receive :advance
-    resolver.iterate
+    it 'should remove files that are ignored' do
+      stub_traversers [
+        { name: 'a', ignored?: true},
+        { name: 'b'},
+        { name: 'c'},
+      ]
+      traversers[0].should_receive :rm
+      resolver.iterate
+    end
+
+    it 'should advance history when it has candidate name' do
+      stub_history name: 'a'
+      stub_traversers [{ name: 'a'}, { name: 'b'}]
+      history.should_receive :advance
+      resolver.iterate
+    end
+
+    it 'should advance traversers with the candidate name' do
+      stub_history name: 'b'
+      stub_traversers [
+        { name: 'a'},
+        { name: 'a'},
+        { name: 'b'},
+      ]
+      history.should_not_receive :advance
+      traversers[0].should_receive :advance
+      traversers[1].should_receive :advance
+      traversers[2].should_not_receive :advance
+      resolver.iterate
+    end
   end
 
   describe '#candidate' do

@@ -7,6 +7,7 @@ class SuperChangeResolver
     first, *rest = candidates
     first.ignored? ? first.rm : first.cp(*rest)
     advance_matching_traversers first, @history, *@traversers
+    !@traversers.all? {|traverser| traverser.empty? }
   end
 
   def advance_matching_traversers first, *traversers
