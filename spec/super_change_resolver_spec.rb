@@ -18,40 +18,51 @@ describe SuperChangeResolver do
     end
   end
 
-  it 'should determine the next candidate according to the name collation order' do
+  it 'should copy all other traversers to candidate' do
     stub_traversers [
       { name: 'a'},
       { name: 'b'},
       { name: 'c'},
     ]
-    resolver.candidate.should == traversers[0]
+    traversers[0].should_receive(:cp).with traversers[1], traversers[2]
+    resolver.iterate
   end
 
-  it 'should determine the next candidate according to the name collation order' do
-    stub_traversers [
-      { name: 'c'},
-      { name: 'b'},
-      { name: 'a'},
-    ]
-    resolver.candidate.should == traversers[2]
-  end
+  describe '#candidate' do
+    it 'should determine the next candidate according to the name collation order' do
+      stub_traversers [
+        { name: 'a'},
+        { name: 'b'},
+        { name: 'c'},
+      ]
+      resolver.candidate.should == traversers[0]
+    end
 
-  it 'should determine the next candidate for the same name by most recent timestamp' do
-    stub_traversers [
-      { name: 'a', ts: 10},
-      { name: 'a', ts: 20},
-      { name: 'b'},
-    ]
-    resolver.candidate.should == traversers[1]
-  end
+    it 'should determine the next candidate according to the name collation order' do
+      stub_traversers [
+        { name: 'c'},
+        { name: 'b'},
+        { name: 'a'},
+      ]
+      resolver.candidate.should == traversers[2]
+    end
 
-  it 'should determine the next candidate for the same name by most recent timestamp' do
-    stub_traversers [
-      { name: 'a', ts: 20},
-      { name: 'a', ts: 10},
-      { name: 'b'},
-    ]
-    resolver.candidate.should == traversers[0]
+    it 'should determine the next candidate for the same name by most recent timestamp' do
+      stub_traversers [
+        { name: 'a', ts: 10},
+        { name: 'a', ts: 20},
+        { name: 'b'},
+      ]
+      resolver.candidate.should == traversers[1]
+    end
+
+    it 'should determine the next candidate for the same name by most recent timestamp' do
+      stub_traversers [
+        { name: 'a', ts: 20},
+        { name: 'a', ts: 10},
+        { name: 'b'},
+      ]
+      resolver.candidate.should == traversers[0]
+    end
   end
-  it 'should determine the next candidate for the same name and timestamp favouring non historical'
 end

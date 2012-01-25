@@ -3,10 +3,19 @@ class SuperChangeResolver
     @history, @traversers = history, traversers
   end
 
+  def iterate
+    first, *rest = candidates
+    first.cp *rest
+  end
+
   def candidate
+    candidates.first
+  end
+
+  def candidates
     @traversers.sort do |left,right|
       combine left.name <=> right.name, right.ts <=> left.ts
-    end.first
+    end
   end
 
   def combine *exps
