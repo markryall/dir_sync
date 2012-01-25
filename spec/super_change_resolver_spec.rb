@@ -15,12 +15,8 @@ describe SuperChangeResolver do
 
   def stub_traversers hashes
     hashes.each_with_index do |traverser_stubs, index|
-      stubs = { ts: 0 }.merge traverser_stubs
+      stubs = { ts: 0, cp: nil, advance: nil, empty?: false, ignored?: false }.merge traverser_stubs
       traversers << stub("traverser#{index}").tap do |traverser|
-        traverser.stub! :cp
-        traverser.stub! :advance
-        traverser.stub! :ignored?
-        traverser.stub! :empty?
         stubs.each do |meth,ret|
            traverser.stub!(meth).and_return ret
         end

@@ -5,9 +5,9 @@ class SuperChangeResolver
 
   def iterate
     first, *rest = candidates
+    return false unless first
     first.ignored? ? first.rm : first.cp(*rest)
     advance_matching_traversers first, @history, *@traversers
-    !@traversers.all? {|traverser| traverser.empty? }
   end
 
   def advance_matching_traversers first, *traversers
@@ -17,7 +17,7 @@ class SuperChangeResolver
   end
 
   def candidates
-    @traversers.sort do |left,right|
+    @traversers.select{|t| !t.empty? }.sort do |left,right|
       combine left.name <=> right.name, right.ts <=> left.ts
     end
   end

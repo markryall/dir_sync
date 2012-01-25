@@ -2,7 +2,9 @@ class HistoricalTraverser
   REGEXP = /:(\d+)$/
   attr_reader :current, :relative, :timestamp
 
-  def initialize path
+  def initialize name
+    `mkdir -p ~/.dir_sync`
+    path = "~/.dir_sync/#{name}"
     if File.exist? path
       @traverser = Fiber.new do
         File.open(path) do |file|
@@ -10,11 +12,11 @@ class HistoricalTraverser
         end
         Fiber.yield nil
       end
-      @current = :first
+      @current = @traverser.resume
     end
   end
 
-  def next
+  def advance
     @current = @traverser.resume if @current
     if @current
       match = REGEXP.match(@current)
@@ -22,6 +24,15 @@ class HistoricalTraverser
       @relative = match.pre_match
       @timestamp = match[1].to_i
     end
+  end
+  alias next advance
+
+  def name
+    @relative
+  end
+
+  def ts
+    @timestamp
   end
 
   def empty?

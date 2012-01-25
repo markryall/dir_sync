@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+$: << File.dirname(__FILE__)+'/../lib'
+
+require 'traverser'
+require 'historical_traverser'
+require 'super_change_resolver'
+require 'synchroniser'
+
+if ARGV.size < 3
+  puts "usage: #{__FILE__} name directory1 directory2 ..."
+  puts " set DEBUG for verbose output"
+  exit 1
+end
+
+name = ARGV.shift
+
+traversers = ARGV.map {|path| Traverser.new Pathname.new path }
+history = HistoricalTraverser.new "~/.dir_sync/#{name}"
+resolver = SuperChangeResolver.new history, *traversers
+Synchroniser.new(resolver).iterate

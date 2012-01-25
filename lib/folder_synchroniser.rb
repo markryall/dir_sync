@@ -10,11 +10,12 @@ class FolderSynchroniser
   ]
 
   def initialize name, left, right
+    home = File.expand_path '~'
     `mkdir -p ~/.dir_sync`
-    @previous = "~/.dir_sync/#{name}"
+    @previous = "#{home}/.dir_sync/#{name}"
     @left = Traverser.new Pathname.new(left)
     @right = Traverser.new Pathname.new(right)
-    @old = HistoricalTraverser.new @previous
+    @old = HistoricalTraverser.new name
     @new = File.open(@previous+'.tmp', 'w')
     @resolver = ChangeResolver.new @old, @left, @right
   end

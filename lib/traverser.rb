@@ -1,6 +1,11 @@
 require 'pathname'
 
 class Traverser
+  IGNORE_PATTERNS = [
+    /\.DS_Store$/,
+    /\._/
+  ]
+
   attr_reader :current
 
   def initialize path
@@ -10,22 +15,23 @@ class Traverser
       @path.find { |child| Fiber.yield child if child.file? }
       Fiber.yield nil
     end
-    @current = :first
+    @current = @traverser.resume
   end
 
   def base
     @path
   end
 
-  def next
+  def advance
     @current = @traverser.resume if @current
   end
+  alias next advance
 
-  def relative
+  def name
     @current.relative_path_from(@path).to_s if @current
   end
 
-  def timestamp
+  def ts
     @current.mtime.to_i if @current
   end
 
@@ -35,5 +41,13 @@ class Traverser
 
   def empty?
     @current.nil?
+  end
+
+  def ignored?
+    IGNORE_PATTERNS.any? {|pattern| pattern.match name }
+  end
+
+  def cp *traversers
+    traversers.each { |t| puts "copying #{name} to #{t.base}" }
   end
 end
