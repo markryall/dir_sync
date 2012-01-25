@@ -20,3 +20,29 @@ Scenario: Syncing two non existant directories
   """
   And a directory named "a" should exist
   And a directory named "b" should exist
+
+Scenario: Syncing a single file from left to right
+  Given a directory named "a"
+  And I write to "a/readme.txt" with:
+  """
+  The content
+  """
+  When I successfully run `dir_sync a b`
+  Then the stdout should contain exactly:
+  """
+  cp -p "a/readme.txt" "b/readme.txt"
+
+  """
+
+Scenario: Syncing a single file from right to left
+  Given a directory named "b"
+  And I write to "b/readme.txt" with:
+  """
+  The content
+  """
+  When I successfully run `dir_sync a b`
+  Then the stdout should contain exactly:
+  """
+  cp -p "b/readme.txt" "a/readme.txt"
+
+  """
