@@ -10,8 +10,8 @@ unless ARGV.size > 1
   exit 1
 end
 
+name = ARGV.shift
 left = ARGV.shift
 right = ARGV.shift
-history = ARGV.shift
 
-FolderSynchroniser.new(left, right, history).execute
+FolderSynchroniser.new(name, left, right).execute

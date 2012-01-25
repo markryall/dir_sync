@@ -6,14 +6,14 @@ Feature: Synchonising two folders for the first time
 Scenario: Syncing two empty directories
   Given a directory named "a"
   And a directory named "b"
-  When I successfully run `dir_sync a b`
+  When I successfully run `dir_sync test a b`
   Then the stdout should contain exactly:
   """
 
   """
 
 Scenario: Syncing two non existant directories
-  When I successfully run `dir_sync a b`
+  When I successfully run `dir_sync test a b`
   Then the stdout should contain exactly:
   """
 
@@ -27,7 +27,7 @@ Scenario: Syncing a single file from left to right
   """
   The content
   """
-  When I successfully run `dir_sync a b`
+  When I successfully run `dir_sync test a b`
   Then the stdout should contain exactly:
   """
   cp -p "a/readme.txt" "b/readme.txt"
@@ -40,7 +40,7 @@ Scenario: Syncing a single file from right to left
   """
   The content
   """
-  When I successfully run `dir_sync a b`
+  When I successfully run `dir_sync test a b`
   Then the stdout should contain exactly:
   """
   cp -p "b/readme.txt" "a/readme.txt"

@@ -9,8 +9,8 @@ class FolderSynchroniser
     /\._/
   ]
 
-  def initialize left, right, previous
-    @previous = previous || 'history'
+  def initialize name, left, right
+    @previous = name
     @left = Traverser.new Pathname.new(left)
     @right = Traverser.new Pathname.new(right)
     @old = HistoricalTraverser.new @previous
