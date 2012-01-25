@@ -4,16 +4,33 @@ require 'super_change_resolver'
 
 describe SuperChangeResolver do
   let(:history) { stub 'history' }
-  let(:traverser1) { stub 'traverser1' }
-  let(:traverser2) { stub 'traverser2' }
-  let(:traverser3) { stub 'traverser3' }
-  let(:resolver) { SuperChangeResolver.new history, traverser1, traverser2, traverser3 }
+  let(:traversers) { [] }
+  let(:resolver) { SuperChangeResolver.new history, *traversers }
+
+  def stub_traversers hashes
+    hashes.each_with_index do |traverser_stubs, index|
+      traverser_stubs.each do |meth,ret|
+        traversers << stub("traverser#{index}").tap {|t| t.stub!(meth).and_return ret }
+      end
+    end
+  end
 
   it 'should determine the next candidate according to the name collation order' do
-    traverser1.should_receive(:name).and_return 'c'
-    traverser2.should_receive(:name).and_return 'b'
-    traverser3.should_receive(:name).and_return 'a'
-    resolver.candidate.should == traverser3
+    stub_traversers [
+      { name: 'a'},
+      { name: 'b'},
+      { name: 'c'},
+    ]
+    resolver.candidate.should == traversers[0]
+  end
+
+  it 'should determine the next candidate according to the name collation order' do
+    stub_traversers [
+      { name: 'c'},
+      { name: 'b'},
+      { name: 'a'},
+    ]
+    resolver.candidate.should == traversers[2]
   end
 
   it 'should determine the next candidate for the same name by earliest timestamp'

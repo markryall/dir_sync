@@ -4,7 +4,8 @@ class SuperChangeResolver
   end
 
   def candidate
-    @traversers.each {|traverser| traverser.name }
-    @traversers[2]
+    @traversers.sort do |left,right|
+      left.name <=> right.name
+    end.first
   end
 end
