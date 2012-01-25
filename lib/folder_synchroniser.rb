@@ -10,7 +10,8 @@ class FolderSynchroniser
   ]
 
   def initialize name, left, right
-    @previous = name
+    `mkdir -p ~/.dir_sync`
+    @previous = "~/.dir_sync/#{name}"
     @left = Traverser.new Pathname.new(left)
     @right = Traverser.new Pathname.new(right)
     @old = HistoricalTraverser.new @previous
