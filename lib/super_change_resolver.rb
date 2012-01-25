@@ -13,7 +13,7 @@ class SuperChangeResolver
     return false unless first
     debug "first is #{first.description}"
     first.ignored? ? rm(first) : cp(first)
-    advance_matching_traversers first.name, @history, *@traversers
+    advance_matching_traversers first.name, @history, *non_empty_traversers
   end
 
   def candidate
@@ -39,14 +39,15 @@ private
   end
 
   def advance_matching_traversers name, *traversers
-    traversers.each do |traverser|
-      debug "#{traverser.base}: comparing #{name} and #{traverser.name}"
-      traverser.advance if traverser.name == name
-    end
+    traversers.select{|t| t.name == name}.each &:advance
+  end
+
+  def non_empty_traversers
+    @traversers.select {|t| !t.empty? }
   end
 
   def candidates
-    @traversers.select{|t| !t.empty? }.sort do |left,right|
+    non_empty_traversers.sort do |left,right|
       combine left.name <=> right.name, right.ts <=> left.ts
     end
   end
