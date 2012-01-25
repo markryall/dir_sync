@@ -3,9 +3,15 @@ $: << File.dirname(__FILE__)+'/../lib'
 require 'super_change_resolver'
 
 describe SuperChangeResolver do
-  let(:history) { stub 'history' }
+  let(:history) { stub 'history', :name => nil }
   let(:traversers) { [] }
   let(:resolver) { SuperChangeResolver.new history, *traversers }
+
+  def stub_history hash
+    hash.each do |meth,ret|
+       history.stub!(meth).and_return ret
+    end
+  end
 
   def stub_traversers hashes
     hashes.each_with_index do |traverser_stubs, index|
@@ -34,12 +40,21 @@ describe SuperChangeResolver do
     resolver.iterate
   end
 
+  it 'should advance history when it has candidate name' do
+    stub_history name: 'a'
+    stub_traversers [{ name: 'a'}, { name: 'b'}]
+    history.should_receive :advance
+    resolver.iterate
+  end
+
   it 'should advance traversers with the candidate name' do
+    stub_history name: 'b'
     stub_traversers [
       { name: 'a'},
       { name: 'a'},
-      { name: 'c'},
+      { name: 'b'},
     ]
+    history.should_not_receive :advance
     traversers[0].should_receive :advance
     traversers[1].should_receive :advance
     traversers[2].should_not_receive :advance

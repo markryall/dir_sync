@@ -6,7 +6,11 @@ class SuperChangeResolver
   def iterate
     first, *rest = candidates
     first.cp *rest
-    @traversers.each do |traverser|
+    advance_matching_traversers first, @history, *@traversers
+  end
+
+  def advance_matching_traversers first, *traversers
+    traversers.each do |traverser|
       traverser.advance if traverser.name == first.name
     end
   end
