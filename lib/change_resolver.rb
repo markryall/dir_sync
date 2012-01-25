@@ -1,7 +1,7 @@
 class ChangeResolver
   TOLERANCE = 5
 
-  def initialize left, right, history
+  def initialize history, left, right
     @left, @right, @history = left, right, history
   end
 

@@ -7,7 +7,7 @@ describe ChangeResolver do
     @left = stub('left')
     @right = stub('right')
     @history = stub('history')
-    @resolver = ChangeResolver.new @left, @right, @history
+    @resolver = ChangeResolver.new @history, @left, @right
   end
 
   def stub_traverser stub, member, value

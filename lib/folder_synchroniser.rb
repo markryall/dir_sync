@@ -15,7 +15,7 @@ class FolderSynchroniser
     @right = Traverser.new Pathname.new(right)
     @old = HistoricalTraverser.new @previous
     @new = File.open(@previous+'.tmp', 'w')
-    @resolver = ChangeResolver.new @left, @right, @old
+    @resolver = ChangeResolver.new @old, @left, @right
   end
 
   def both_equal
