@@ -53,7 +53,7 @@ class Traverser
 
   def cp *traversers
     traversers.each do |t|
-      puts "cp -p #{@current} #{t.base}/#{name}" unless t == self or description == t.description
+      puts "cp -p \"#{@current}\" \"#{t.base}/#{name}\"" unless t == self or description == t.description
     end
   end
 end

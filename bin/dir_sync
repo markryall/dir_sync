@@ -2,16 +2,12 @@
 
 $: << File.dirname(__FILE__)+'/../lib'
 
-require 'folder_synchroniser'
+require 'synchroniser'
 
-unless ARGV.size > 1
-  puts "usage: #{__FILE__} left right [history]"
+if ARGV.size < 3
+  puts "usage: #{__FILE__} name directory1 directory2 ..."
   puts " set DEBUG for verbose output"
   exit 1
 end
 
-name = ARGV.shift
-left = ARGV.shift
-right = ARGV.shift
-
-FolderSynchroniser.new(name, left, right).execute
+Synchroniser.iterate *ARGV
