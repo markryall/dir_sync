@@ -11,3 +11,12 @@ Scenario: Syncing two empty directories
   """
 
   """
+
+Scenario: Syncing two non existant directories
+  When I successfully run `dir_sync a b`
+  Then the stdout should contain exactly:
+  """
+
+  """
+  And a directory named "a" should exist
+  And a directory named "b" should exist

@@ -4,6 +4,7 @@ class Traverser
   attr_reader :current
 
   def initialize path
+    `mkdir -p #{path}`
     @path = path
     @traverser = Fiber.new do
       @path.find { |child| Fiber.yield child if child.file? }
