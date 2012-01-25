@@ -3,7 +3,7 @@ $: << File.dirname(__FILE__)+'/../lib'
 require 'super_change_resolver'
 
 describe SuperChangeResolver do
-  let(:history) { stub 'history', :name => nil }
+  let(:history) { stub 'history', name: nil, base: nil, description: nil, report: nil }
   let(:traversers) { [] }
   let(:resolver) { SuperChangeResolver.new history, *traversers }
 
@@ -15,7 +15,15 @@ describe SuperChangeResolver do
 
   def stub_traversers hashes
     hashes.each_with_index do |traverser_stubs, index|
-      stubs = { ts: 0, cp: nil, advance: nil, empty?: false, ignored?: false }.merge traverser_stubs
+      stubs = {
+        ts: 0,
+        cp: nil,
+        advance: nil,
+        empty?: false,
+        ignored?: false,
+        base: nil,
+        description: nil
+      }.merge traverser_stubs
       traversers << stub("traverser#{index}").tap do |traverser|
         stubs.each do |meth,ret|
            traverser.stub!(meth).and_return ret
@@ -25,7 +33,7 @@ describe SuperChangeResolver do
   end
 
   def candidate
-    resolver.candidates.first
+    resolver.candidate
   end
 
   describe '#iterate' do
@@ -53,7 +61,7 @@ describe SuperChangeResolver do
         { name: 'b'},
         { name: 'c'},
       ]
-      traversers[0].should_receive(:cp).with traversers[1], traversers[2]
+      traversers[0].should_receive(:cp).with *traversers
       resolver.iterate
     end
 

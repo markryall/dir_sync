@@ -4,7 +4,7 @@ require 'synchroniser'
 
 describe Synchroniser do
   let(:resolver) { stub 'resolver'}
-  let(:history) { stub 'history' }
+  let(:history) { stub 'history', close: nil }
   let(:traverser_a) { stub 'traverser_a' }
   let(:traverser_b) { stub 'traverser_b' }
 

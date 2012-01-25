@@ -7,8 +7,7 @@ module Synchroniser
     traversers = paths.map {|path| Traverser.new path }
     history = HistoricalTraverser.new name
     resolver = SuperChangeResolver.new history, *traversers
-    loop do
-      return unless resolver.iterate
-    end
+    loop { break unless resolver.iterate }
+    history.close
   end
 end

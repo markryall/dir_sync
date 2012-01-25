@@ -3,17 +3,29 @@ class HistoricalTraverser
   attr_reader :current, :relative, :timestamp
 
   def initialize name
-    `mkdir -p ~/.dir_sync`
-    path = "~/.dir_sync/#{name}"
-    if File.exist? path
+    home = File.expand_path '~'
+    Pathname.new("#{home}/.dir_sync").mkpath
+    @path_old = "#{home}/.dir_sync/#{name}"
+    @path_new = "#{@path_old}.new"
+    @new = File.open @path_new, 'w'
+    if File.exist? @path_old
       @traverser = Fiber.new do
-        File.open(path) do |file|
+        File.open(@path_old) do |file|
           file.each {|line| Fiber.yield line.chomp}
         end
         Fiber.yield nil
       end
-      @current = @traverser.resume
+      @current = :nothing
+      advance
     end
+  end
+
+  def base
+    "<history>"
+  end
+
+  def description
+    @current
   end
 
   def advance
@@ -26,6 +38,15 @@ class HistoricalTraverser
     end
   end
   alias next advance
+
+  def close
+    @new.close
+    `mv #{@path_new} #{@path_old}`
+  end
+
+  def report traverser
+    @new.puts traverser.description
+  end
 
   def name
     @relative

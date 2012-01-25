@@ -10,12 +10,16 @@ class Traverser
 
   def initialize path
     @path = Pathname.new path
-    @path.mkdir_p
+    @path.mkpath
     @traverser = Fiber.new do
       @path.find { |child| Fiber.yield child if child.file? }
       Fiber.yield nil
     end
     @current = @traverser.resume
+  end
+
+  def description
+    empty? ? 'empty' : "#{name}:#{ts}"
   end
 
   def base
@@ -48,6 +52,8 @@ class Traverser
   end
 
   def cp *traversers
-    traversers.each { |t| puts "copying #{name} to #{t.base}" }
+    traversers.each do |t|
+      puts "cp -p #{@current} #{t.base}/#{name}" unless t == self or description == t.description
+    end
   end
 end
