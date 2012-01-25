@@ -1,11 +1,14 @@
-class Synchroniser
-  def initialize resolver
-    @resolver = resolver
-  end
+require 'traverser'
+require 'historical_traverser'
+require 'super_change_resolver'
 
-  def iterate
+module Synchroniser
+  def self.iterate name, *paths
+    traversers = paths.map {|path| Traverser.new path }
+    history = HistoricalTraverser.new name
+    resolver = SuperChangeResolver.new history, *traversers
     loop do
-      return unless @resolver.iterate
+      return unless resolver.iterate
     end
   end
 end
