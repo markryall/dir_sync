@@ -11,11 +11,17 @@ describe SuperChangeResolver do
     hashes.each_with_index do |traverser_stubs, index|
       stubs = { ts: 0 }.merge traverser_stubs
       traversers << stub("traverser#{index}").tap do |traverser|
+        traverser.stub! :cp
+        traverser.stub! :advance
         stubs.each do |meth,ret|
            traverser.stub!(meth).and_return ret
         end
       end
     end
+  end
+
+  def candidate
+    resolver.candidates.first
   end
 
   it 'should copy all other traversers to candidate' do
@@ -28,6 +34,18 @@ describe SuperChangeResolver do
     resolver.iterate
   end
 
+  it 'should advance traversers with the candidate name' do
+    stub_traversers [
+      { name: 'a'},
+      { name: 'a'},
+      { name: 'c'},
+    ]
+    traversers[0].should_receive :advance
+    traversers[1].should_receive :advance
+    traversers[2].should_not_receive :advance
+    resolver.iterate
+  end
+
   describe '#candidate' do
     it 'should determine the next candidate according to the name collation order' do
       stub_traversers [
@@ -35,7 +53,7 @@ describe SuperChangeResolver do
         { name: 'b'},
         { name: 'c'},
       ]
-      resolver.candidate.should == traversers[0]
+      candidate.should == traversers[0]
     end
 
     it 'should determine the next candidate according to the name collation order' do
@@ -44,7 +62,7 @@ describe SuperChangeResolver do
         { name: 'b'},
         { name: 'a'},
       ]
-      resolver.candidate.should == traversers[2]
+      candidate.should == traversers[2]
     end
 
     it 'should determine the next candidate for the same name by most recent timestamp' do
@@ -53,7 +71,7 @@ describe SuperChangeResolver do
         { name: 'a', ts: 20},
         { name: 'b'},
       ]
-      resolver.candidate.should == traversers[1]
+      candidate.should == traversers[1]
     end
 
     it 'should determine the next candidate for the same name by most recent timestamp' do
@@ -62,7 +80,7 @@ describe SuperChangeResolver do
         { name: 'a', ts: 10},
         { name: 'b'},
       ]
-      resolver.candidate.should == traversers[0]
+      candidate.should == traversers[0]
     end
   end
 end

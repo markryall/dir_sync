@@ -6,10 +6,9 @@ class SuperChangeResolver
   def iterate
     first, *rest = candidates
     first.cp *rest
-  end
-
-  def candidate
-    candidates.first
+    @traversers.each do |traverser|
+      traverser.advance if traverser.name == first.name
+    end
   end
 
   def candidates
