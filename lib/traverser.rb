@@ -8,7 +8,8 @@ class Traverser
 
   attr_reader :current
 
-  def initialize path
+  def initialize path, file_system
+    @file_system = file_system
     @path = Pathname.new path
     @path.mkpath
     @traverser = Fiber.new do
@@ -53,7 +54,7 @@ class Traverser
 
   def cp *traversers
     traversers.each do |t|
-      puts "cp -p \"#{@current}\" \"#{t.base}/#{name}\"" unless t == self or description == t.description
+      @file_system.cp @current.to_s, "#{t.base}/#{name}" unless description == t.description
     end
   end
 end
