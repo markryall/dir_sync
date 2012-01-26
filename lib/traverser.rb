@@ -6,17 +6,15 @@ class Traverser
     /\._/
   ]
 
-  attr_reader :current
-
   def initialize path, file_system
     @file_system = file_system
     @path = Pathname.new path
     @path.mkpath
-    @traverser = Fiber.new do
+    @fiber = Fiber.new do
       @path.find { |child| Fiber.yield child if child.file? }
       Fiber.yield nil
     end
-    @current = @traverser.resume
+    @current = @fiber.resume
   end
 
   def description
@@ -28,9 +26,8 @@ class Traverser
   end
 
   def advance
-    @current = @traverser.resume if @current
+    @current = @fiber.resume if @current
   end
-  alias next advance
 
   def name
     @current.relative_path_from(@path).to_s if @current
@@ -54,7 +51,7 @@ class Traverser
 
   def cp *traversers
     traversers.each do |t|
-      @file_system.cp @current.to_s, "#{t.base}/#{name}" unless description == t.description
+      @file_system.cp @current.to_s, "#{t.base}/#{name}" unless name == t.name and ts == t.ts
     end
   end
 end
