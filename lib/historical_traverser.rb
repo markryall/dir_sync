@@ -1,5 +1,5 @@
 class HistoricalTraverser
-  attr_reader :name, :ts
+  attr_reader :name, :ts, :base, :description
   REGEXP = /:(\d+)$/
 
   def initialize name
@@ -8,31 +8,24 @@ class HistoricalTraverser
     @path_old = "#{home}/.dir_sync/#{name}"
     @path_new = "#{@path_old}.new"
     @new = File.open @path_new, 'w'
+    @base = '<history>'
     if File.exist? @path_old
-      @traverser = Fiber.new do
+      @fiber = Fiber.new do
         File.open(@path_old) do |file|
           file.each {|line| Fiber.yield line.chomp}
         end
         Fiber.yield nil
       end
-      @current = :nothing
+      @description = :nothing
       advance
     end
   end
 
-  def base
-    "<history>"
-  end
-
-  def description
-    @current
-  end
-
   def advance
-    @current = @traverser.resume if @current
-    if @current
-      match = REGEXP.match(@current)
-      raise "unable to parse line \"#{@current}\"" unless match
+    @description = @fiber.resume if @description
+    if @description
+      match = REGEXP.match @description
+      raise "unable to parse line \"#{@description}\"" unless match
       @name = match.pre_match
       @ts = match[1].to_i
     end
@@ -48,6 +41,6 @@ class HistoricalTraverser
   end
 
   def empty?
-    @current.nil?
+    @description.nil?
   end
 end

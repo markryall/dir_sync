@@ -1,6 +1,8 @@
 require 'pathname'
 
 class Traverser
+  attr_reader :base
+
   TOLERANCE=5
   IGNORE_PATTERNS = [
     /\.DS_Store$/,
@@ -9,10 +11,10 @@ class Traverser
 
   def initialize path, file_system
     @file_system = file_system
-    @path = Pathname.new path
-    @path.mkpath
+    @base = Pathname.new path
+    @base.mkpath
     @fiber = Fiber.new do
-      @path.find { |child| Fiber.yield child if child.file? }
+      @base.find { |child| Fiber.yield child if child.file? }
       Fiber.yield nil
     end
     @current = @fiber.resume
@@ -22,16 +24,12 @@ class Traverser
     empty? ? 'empty' : "#{name}:#{ts}"
   end
 
-  def base
-    @path
-  end
-
   def advance
     @current = @fiber.resume if @current
   end
 
   def name
-    @current.relative_path_from(@path).to_s if @current
+    @current.relative_path_from(@base).to_s if @current
   end
 
   def ts
