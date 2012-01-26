@@ -7,7 +7,7 @@ if ARGV.empty?
 end
 
 file = ARGV.shift
-lines = File.readlines(file).map {|s| s.chomp.strip }.select {|s| !s.empty?}
+lines = File.readlines(file).map {|s| s.chomp.strip }.select {|s| !s.empty? and !s.start_with?('#')}
 
 loop do
   break if lines.empty?
@@ -15,3 +15,4 @@ loop do
   File.open("#{file}.tmp", 'w') {|f| f.puts lines.join "\n" }
   `mv #{file}.tmp #{file}`
 end
+`rm #{file}`
