@@ -3,108 +3,135 @@ $: << File.dirname(__FILE__)+'/../lib'
 require 'change_resolver'
 
 describe ChangeResolver do
-  before do
-    @left = stub('left')
-    @right = stub('right')
-    @history = stub('history')
-    @resolver = ChangeResolver.new @history, @left, @right
-  end
+  let(:history) { stub 'history', name: nil, base: nil, description: nil, report: nil }
+  let(:traversers) { [] }
+  let(:resolver) { ChangeResolver.new history, *traversers }
 
-  def stub_traverser stub, member, value
-    if value
-      stub.stub!(member).and_return(value)
-      stub.stub!(:empty?).and_return(false)
-    else
-      stub.stub!(:empty?).and_return(true)
+  def stub_history hash
+    hash.each do |meth,ret|
+       history.stub!(meth).and_return ret
     end
   end
 
-  def stub_all member, params
-    stub_traverser @left, member, params[:left]
-    stub_traverser @right, member, params[:right]
-    stub_traverser @history, member, params[:history]
-  end
-
-  def relative params
-    stub_all :relative, params
-  end
-
-  def timestamp params
-    stub_all :timestamp, params
-  end
-
-  it 'should resolve finished with nothing' do
-    relative :left => nil, :right => nil
-    @resolver.dispatch.should == :finished
-  end
-
-  it 'should resolve right_added with right only' do
-    relative :right => 'a'
-    @resolver.dispatch.should == :right_added
-  end
-
-  it 'should resolve left_added with left only' do
-    relative :left => 'b'
-    @resolver.dispatch.should == :left_added
-  end
-
-  describe 'left and right are equal' do
-    it 'should resolve equal when name and timestamps are equal' do
-      relative  :left => 'a', :right => 'a'
-      timestamp :left => 100, :right => 100
-      @resolver.dispatch.should == :both_equal
-    end
-
-    it 'should resolve equal when name and timestamps are within tolerance' do
-      relative  :left => 'a', :right => 'a'
-      timestamp :left => 99, :right => 101
-      @resolver.dispatch.should == :both_equal
-    end
-
-    it 'should resolve left_modified when names are equal and left is more recent' do
-      relative  :left => 'a', :right => 'a'
-      timestamp :left => 200, :right => 100
-      @resolver.dispatch.should == :left_modified
-    end
-
-    it 'should resolve right_modified when names are equal and right is more recent' do
-      relative  :left => 'a', :right => 'a'
-      timestamp :left => 100, :right => 200
-      @resolver.dispatch.should == :right_modified
+  def stub_traversers hashes
+    hashes.each_with_index do |traverser_stubs, index|
+      stubs = {
+        ts: 0,
+        cp: nil,
+        advance: nil,
+        empty?: false,
+        ignored?: false,
+        base: nil,
+        description: nil
+      }.merge traverser_stubs
+      traversers << stub("traverser#{index}").tap do |traverser|
+        stubs.each do |meth,ret|
+           traverser.stub!(meth).and_return ret
+        end
+      end
     end
   end
 
-  describe 'without history' do
-    it 'should resolve left added' do
-      relative :left => 'abc', :right => 'def'
-      @resolver.dispatch.should == :left_added
+  def candidate
+    resolver.candidate
+  end
+
+  describe '#iterate' do
+    it 'should return true if any traverser is not empty' do
+      stub_traversers [
+        { name: 'a'},
+        { name: 'a'}
+      ]
+      resolver.iterate.should be_true
     end
 
-    it 'should resolve right added' do
-      relative :left => 'def', :right => 'abc'
-      @resolver.dispatch.should == :right_added
+    it 'should return false if all traversers are empty' do
+      stub_traversers [
+        { name: 'a'},
+        { name: 'b'}
+      ]
+      traversers[0].should_receive(:empty?).and_return true
+      traversers[1].should_receive(:empty?).and_return true
+      resolver.iterate.should be_false
+    end
+
+    it 'should copy all other traversers to candidate' do
+      stub_traversers [
+        { name: 'a'},
+        { name: 'b'},
+        { name: 'c'},
+      ]
+      traversers[0].should_receive(:cp).with *traversers
+      resolver.iterate
+    end
+
+    it 'should remove files that are ignored' do
+      stub_traversers [
+        { name: 'a', ignored?: true},
+        { name: 'b'},
+        { name: 'c'},
+      ]
+      traversers[0].should_receive :rm
+      resolver.iterate
+    end
+
+    it 'should advance history when it has candidate name' do
+      stub_history name: 'a'
+      stub_traversers [{ name: 'a'}, { name: 'b'}]
+      history.should_receive :advance
+      resolver.iterate
+    end
+
+    it 'should advance traversers with the candidate name' do
+      stub_history name: 'b'
+      stub_traversers [
+        { name: 'a'},
+        { name: 'a'},
+        { name: 'b'},
+      ]
+      history.should_not_receive :advance
+      traversers[0].should_receive :advance
+      traversers[1].should_receive :advance
+      traversers[2].should_not_receive :advance
+      resolver.iterate
     end
   end
 
-  describe 'with history' do
-    it 'should resolve left deleted' do
-      relative :left => 'def', :right => 'abc', :history => 'abc'
-      @resolver.dispatch.should == :left_deleted
+  describe '#candidate' do
+    it 'should determine the next candidate according to the name collation order' do
+      stub_traversers [
+        { name: 'a'},
+        { name: 'b'},
+        { name: 'c'},
+      ]
+      candidate.should == traversers[0]
     end
 
-    it 'should resolve right deleted' do
-      relative :left => 'abc', :right => 'def', :history => 'abc'
-      @resolver.dispatch.should == :right_deleted
+    it 'should determine the next candidate according to the name collation order' do
+      stub_traversers [
+        { name: 'c'},
+        { name: 'b'},
+        { name: 'a'},
+      ]
+      candidate.should == traversers[2]
     end
 
-    it 'should resolve left added' do
-      relative :left => 'abc', :right => 'def', :history => 'def'
-      @resolver.dispatch.should == :left_added
+    it 'should determine the next candidate for the same name by most recent timestamp' do
+      stub_traversers [
+        { name: 'a', ts: 10},
+        { name: 'a', ts: 20},
+        { name: 'b'},
+      ]
+      candidate.should == traversers[1]
     end
 
-    it 'should resolve right added' do
-      relative :left => 'def', :right => 'abc', :history => 'def'
-      @resolver.dispatch.should == :right_added
+    it 'should determine the next candidate for the same name by most recent timestamp' do
+      stub_traversers [
+        { name: 'a', ts: 20},
+        { name: 'a', ts: 10},
+        { name: 'b'},
+      ]
+      candidate.should == traversers[0]
     end
   end
 end

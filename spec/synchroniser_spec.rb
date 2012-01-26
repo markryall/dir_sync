@@ -12,7 +12,7 @@ describe Synchroniser do
     HistoricalTraverser.should_receive(:new).with('test').and_return history
     Traverser.should_receive(:new).with('a').and_return traverser_a
     Traverser.should_receive(:new).with('b').and_return traverser_b
-    SuperChangeResolver.should_receive(:new).with(history, traverser_a, traverser_b).and_return resolver
+    ChangeResolver.should_receive(:new).with(history, traverser_a, traverser_b).and_return resolver
   end
 
   it 'should call iterate once resolved if it returns false' do
