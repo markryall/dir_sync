@@ -12,7 +12,7 @@ class ChangeResolver
     first = candidates.first
     return false unless first
     debug "first is #{first.description}"
-    first.ignored? ? rm(first) : cp(first)
+    send dispatch(first), first
     advance_matching_traversers first.name, @history, *non_empty_traversers
   end
 
@@ -20,6 +20,14 @@ class ChangeResolver
     candidates.first
   end
 private
+  def dispatch traverser
+    return :rm if traverser.ignored?
+    if traverser.equivalent? @history
+      return all_equivalent_traversers?(traverser) ? :ignore : :rm
+    end
+    :cp
+  end
+
   def rm traverser
     traverser.rm
   end
@@ -27,6 +35,9 @@ private
   def cp traverser
     @history.report traverser
     traverser.cp *@traversers
+  end
+
+  def ignore traverser
   end
 
   def report_traversers
@@ -40,6 +51,10 @@ private
 
   def advance_matching_traversers name, *traversers
     traversers.select{|t| t.name == name}.each &:advance
+  end
+
+  def all_equivalent_traversers? traverser
+    @traversers.all? {|t| traverser.equivalent? t }
   end
 
   def non_empty_traversers

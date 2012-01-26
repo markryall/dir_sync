@@ -1,7 +1,7 @@
-Feature: Synchonising two folders for the first time
-  As a cautious user
-  I want to sync two folders
-  So that I don't lose any of my work
+Feature: Synchonising folders
+  As a practical, intelligent and charismatic person
+  I want to synchronise folders
+  So that I can keep multiple backup copies of my work
 
 Scenario: Syncing two empty directories
   Given a directory named "a"
@@ -44,5 +44,33 @@ Scenario: Syncing a single file from right to left
   Then the stdout should contain exactly:
   """
   cp -p "b/readme.txt" "a/readme.txt"
+
+  """
+
+Scenario: Do nothing when files are already in sync with history
+  Given the file system:
+  | path         | time |
+  | a/readme.txt | 1000 |
+  | b/readme.txt | 1000 |
+  And past synchronisation history:
+  | path         | time |
+  | readme.txt   | 1000 |
+  When I successfully run `dir_sync test a b`
+  Then the stdout should contain exactly:
+  """
+
+  """
+
+Scenario: Detecting a deletion from past history
+  Given the file system:
+  | path         | time |
+  | b/readme.txt | 1000 |
+  And past synchronisation history:
+  | path         | time |
+  | readme.txt   | 1000 |
+  When I successfully run `dir_sync test a b`
+  Then the stdout should contain exactly:
+  """
+  rm "b/readme.txt"
 
   """

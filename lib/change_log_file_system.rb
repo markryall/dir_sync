@@ -10,6 +10,6 @@ class ChangeLogFileSystem
   end
 
   def rm path
-    @io.puts "rm #{path}"
+    @io.puts "rm \"#{path}\""
   end
 end

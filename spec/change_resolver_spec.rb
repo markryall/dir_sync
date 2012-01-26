@@ -3,7 +3,7 @@ $: << File.dirname(__FILE__)+'/../lib'
 require 'change_resolver'
 
 describe ChangeResolver do
-  let(:history) { stub 'history', name: nil, base: nil, description: nil, report: nil }
+  let(:history) { stub 'history', name: nil, base: nil, description: nil, report: nil, advance: nil }
   let(:traversers) { [] }
   let(:resolver) { ChangeResolver.new history, *traversers }
 
@@ -22,7 +22,8 @@ describe ChangeResolver do
         empty?: false,
         ignored?: false,
         base: nil,
-        description: nil
+        description: nil,
+        equivalent?: false
       }.merge traverser_stubs
       traversers << stub("traverser#{index}").tap do |traverser|
         stubs.each do |meth,ret|
@@ -71,6 +72,33 @@ describe ChangeResolver do
         { name: 'b'},
         { name: 'c'},
       ]
+      traversers[0].should_receive :rm
+      resolver.iterate
+    end
+
+    it 'should ignore files that appear in history and have not been removed from any traverser' do
+      stub_history name: 'a'
+      stub_traversers [
+        { name: 'a'},
+        { name: 'a'}
+      ]
+      traversers[0].should_receive(:equivalent?).with(history).and_return true
+      traversers[0].should_receive(:equivalent?).with(traversers[0]).and_return true
+      traversers[0].should_receive(:equivalent?).with(traversers[1]).and_return true
+      traversers[0].should_not_receive :rm
+      resolver.iterate
+    end
+
+    it 'should remove files that appear in history but have been removed from a traverser' do
+      stub_history name: 'a'
+      stub_traversers [
+        { name: 'a'},
+        { name: 'b'},
+        { name: 'a'}
+      ]
+      traversers[0].should_receive(:equivalent?).with(history).and_return true
+      traversers[0].should_receive(:equivalent?).with(traversers[0]).and_return true
+      traversers[0].should_receive(:equivalent?).with(traversers[1]).and_return false
       traversers[0].should_receive :rm
       resolver.iterate
     end

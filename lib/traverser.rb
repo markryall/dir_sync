@@ -50,6 +50,10 @@ class Traverser
     end
   end
 
+  def rm
+    @file_system.rm @current.to_s
+  end
+
   def equivalent? traverser
     name == traverser.name and (ts - traverser.ts).abs <= TOLERANCE
   end
