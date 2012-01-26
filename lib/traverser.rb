@@ -50,8 +50,6 @@ class Traverser
     end
   end
 
-  private
-
   def equivalent? traverser
     name == traverser.name and (ts - traverser.ts).abs <= TOLERANCE
   end
