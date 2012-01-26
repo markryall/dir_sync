@@ -1,6 +1,6 @@
 class HistoricalTraverser
+  attr_reader :name, :ts
   REGEXP = /:(\d+)$/
-  attr_reader :current, :relative, :timestamp
 
   def initialize name
     home = File.expand_path '~'
@@ -33,11 +33,10 @@ class HistoricalTraverser
     if @current
       match = REGEXP.match(@current)
       raise "unable to parse line \"#{@current}\"" unless match
-      @relative = match.pre_match
-      @timestamp = match[1].to_i
+      @name = match.pre_match
+      @ts = match[1].to_i
     end
   end
-  alias next advance
 
   def close
     @new.close
@@ -48,19 +47,7 @@ class HistoricalTraverser
     @new.puts traverser.description
   end
 
-  def name
-    @relative
-  end
-
-  def ts
-    @timestamp
-  end
-
   def empty?
     @current.nil?
-  end
-
-  def to_s
-    @current
   end
 end
