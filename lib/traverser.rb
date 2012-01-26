@@ -6,7 +6,7 @@ class Traverser
   TOLERANCE=5
   IGNORE_PATTERNS = [
     /\.DS_Store$/,
-    /\._/
+    /\/\._/
   ]
 
   def initialize path, file_system
