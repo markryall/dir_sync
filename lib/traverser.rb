@@ -1,6 +1,7 @@
 require 'pathname'
 
 class Traverser
+  TOLERANCE=5
   IGNORE_PATTERNS = [
     /\.DS_Store$/,
     /\._/
@@ -37,10 +38,6 @@ class Traverser
     @current.mtime.to_i if @current
   end
 
-  def to_s
-    "#{relative}:#{timestamp}"
-  end
-
   def empty?
     @current.nil?
   end
@@ -51,7 +48,13 @@ class Traverser
 
   def cp *traversers
     traversers.each do |t|
-      @file_system.cp @current.to_s, "#{t.base}/#{name}" unless name == t.name and ts == t.ts
+      @file_system.cp @current.to_s, "#{t.base}/#{name}" unless equivalent? t
     end
+  end
+
+  private
+
+  def equivalent? traverser
+    name == traverser.name and (ts - traverser.ts).abs <= TOLERANCE
   end
 end

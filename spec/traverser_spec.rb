@@ -23,6 +23,7 @@ describe Traverser do
   end
 
   it 'should skip copying to itself' do
+    with_file '1.txt'
     file_system.should_not_receive :cp
     traverser.cp traverser
   end
@@ -38,6 +39,20 @@ describe Traverser do
     with_file '1.txt', 10
     other_traverser = stub 'other_traverser', base: 'b', name: '1.txt', ts: 10
     file_system.should_not_receive :cp
+    traverser.cp other_traverser
+  end
+
+  it 'should skip copying to traversers with the same file name and timestamp is within tolerance' do
+    with_file '1.txt', 10
+    other_traverser = stub 'other_traverser', base: 'b', name: '1.txt', ts: 15
+    file_system.should_not_receive :cp
+    traverser.cp other_traverser
+  end
+
+  it 'should skip copying to traversers with the same file name and timestamp is outside tolerance' do
+    with_file '1.txt', 10
+    other_traverser = stub 'other_traverser', base: 'b', name: '1.txt', ts: 16
+    file_system.should_receive(:cp).with 'a/1.txt', 'b/1.txt'
     traverser.cp other_traverser
   end
 end
