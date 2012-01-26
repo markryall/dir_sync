@@ -4,20 +4,26 @@ Produce a script to synchronise two directories.  Kind of like unison but a bit 
 
 = Usage
 
-    dir_sync left_folder right_folder index_file
+    dir_sync name folder1 folder2 ...
 
 This will output all require mkdir and cp commands that would be required to sync the
-left and right directories.  It will also produce the index file which will be used
-in subsequent synchronisations to detect deletions.  Note that the newest file always wins
-on the initial run (ie. modifications may be overwritten).  Subsequent runs will detect
-conflicts
+folders.  It will also produce the index file (~/.dir_sync/NAME) which will be used
+in subsequent synchronisations to detect deletions.  You can then review the commands
+before executing them (in case they seem likely to do something undesirable). Note that
+files that differ only in modification time will be overwritten with the most recent one.
 
     drain script
 
 This simply runs each line in the specified script.  As each line is executed, a new script is
 produced.  The purpose of this is to allow the script to be interrupted and able to resume.
 
+Together, these scripts can be used as follows:
+
+    dir_sync photos /Volumes/BACKUP/sync/photos /Users/Shared/Photos | tee sync.sh
+    drain sync.sh
+
 = Future Plans
 
 * actually execute file commands perhaps with optional confirmation
-* handle any arbitrary number of directories (to force the implementation to be generalised)
+* consider introducing checksums/filesize comparisons to avoid copying identical files that
+differ only in modification time.
