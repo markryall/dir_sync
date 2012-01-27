@@ -10,10 +10,11 @@ EOF
   spec.email = 'mark@ryall.name'
   spec.homepage = 'http://github.com/markryall/dir_sync'
  
-  spec.files = Dir['lib/**/*'] +
+  spec.files = Dir['bin/*'] +
+               Dir['features/**/*'] +
+               Dir['lib/**/*'] +
                Dir['spec/**/*'] +
-               Dir['bin/*'] +
-               ['README.rdoc', 'MIT-LICENSE', 'HISTORY.rdoc', 'Rakefile', '.gemtest']
+               ['.gemtest', 'HISTORY.rdoc', 'MIT-LICENSE', 'Rakefile', 'README.rdoc']
 
   spec.executables << 'dir_sync'
   spec.executables << 'drain'
