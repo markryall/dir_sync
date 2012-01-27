@@ -1,7 +1,6 @@
 require 'bundler/gem_tasks'
 
-task :default => :test
-task :test => [:spec, :cucumber]
+task :default => [:spec, :cucumber]
 
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new
