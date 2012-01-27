@@ -26,6 +26,7 @@ GEM
     guard-rspec (0.6.0)
       guard (>= 0.10.0)
     json (1.6.5)
+    rake (0.8.7)
     rspec (2.8.0)
       rspec-core (~> 2.8.0)
       rspec-expectations (~> 2.8.0)
@@ -45,4 +46,5 @@ DEPENDENCIES
   growl
   guard
   guard-rspec
+  rake
   rspec
