@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/markryall/dir_sync.png)](http://travis-ci.org/markryall/dir_sync)
+
 = dir_sync
 
 Produce a script to synchronise two directories.  Kind of like unison but a bit simpler.
