@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name = 'dir_sync'
-  spec.version = '0.1.0'
+  spec.version = '0.1.1'
   spec.summary = 'directory synchroniser'
   spec.description = <<-EOF
 Bidirectional directory synchronisation for any number of directories
@@ -16,6 +16,8 @@ EOF
                Dir['spec/**/*'] +
                ['.gemtest', 'HISTORY.rdoc', 'MIT-LICENSE', 'Rakefile', 'README.rdoc']
 
+  spec.required_ruby_version = '>= 1.9'
+
   spec.executables << 'dir_sync'
   spec.executables << 'drain'
 
@@ -23,5 +25,6 @@ EOF
   spec.add_development_dependency 'rspec', '~>2'
   spec.add_development_dependency 'guard'
   spec.add_development_dependency 'guard-rspec'
+  spec.add_development_dependency 'growl'
   spec.add_development_dependency 'aruba'
 end
