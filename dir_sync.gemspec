@@ -17,8 +17,7 @@ EOF
                ['.gemtest', 'HISTORY.rdoc', 'MIT-LICENSE', 'Rakefile', 'README.rdoc']
 
   spec.required_ruby_version = '>= 1.9'
-
-  spec.executables ['dir_sync', 'drain']
+  spec.executables = ['dir_sync', 'drain']
 
   spec.add_development_dependency 'rake', '~>0'
   spec.add_development_dependency 'rspec', '~>2'
