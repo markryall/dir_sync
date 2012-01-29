@@ -1,4 +1,7 @@
-class ChangeResolver
+module DirSync
+end
+
+class DirSync::ChangeResolver
   def debug message
     puts "# #{message}" if ENV['DEBUG']
   end

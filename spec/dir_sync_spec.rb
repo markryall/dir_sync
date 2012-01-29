@@ -14,7 +14,7 @@ describe DirSync do
     DirSync::HistoryTraverser.should_receive(:new).with('test').and_return history
     DirSync::Traverser.should_receive(:new).with('a', file_system).and_return traverser_a
     DirSync::Traverser.should_receive(:new).with('b', file_system).and_return traverser_b
-    ChangeResolver.should_receive(:new).with(history, traverser_a, traverser_b).and_return resolver
+    DirSync::ChangeResolver.should_receive(:new).with(history, traverser_a, traverser_b).and_return resolver
   end
 
   it 'should call iterate once resolved if it returns false' do

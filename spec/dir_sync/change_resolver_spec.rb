@@ -1,11 +1,11 @@
 $: << File.dirname(__FILE__)+'/../lib'
 
-require 'change_resolver'
+require 'dir_sync/change_resolver'
 
-describe ChangeResolver do
+describe DirSync::ChangeResolver do
   let(:history) { stub 'history', name: nil, base: nil, description: nil, report: nil, advance: nil }
   let(:traversers) { [] }
-  let(:resolver) { ChangeResolver.new history, *traversers }
+  let(:resolver) { DirSync::ChangeResolver.new history, *traversers }
 
   def stub_history hash
     hash.each do |meth,ret|
