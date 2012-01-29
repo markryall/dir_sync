@@ -1,4 +1,10 @@
-= 0.1.0
+= 0.1.1 Sun 29 Jan 2012 14:40:03 EST
 
-Fri 27 Jan 2012 20:57:18 EST
-Initial release
+* moved everything into a DirSync module to prevent any namespace collisions.
+* explicitly stated support for ruby 1.9 only in gem specification
+* changed drain script to accept any number of parameters
+
+= 0.1.0 Fri 27 Jan 2012 20:57:18 EST
+
+* initial release
+* performs multidirectional synchronisation for any number of local directories

@@ -3,10 +3,10 @@ Gem::Specification.new do |spec|
   spec.version = '0.1.1'
   spec.summary = 'directory synchroniser'
   spec.description = <<-EOF
-Bidirectional directory synchronisation for any number of directories
+Multidirectional directory synchronisation for any number of directories
 EOF
 
-  spec.authors << 'Mark Ryall'
+  spec.authors ['Mark Ryall','James Ottaway']
   spec.email = 'mark@ryall.name'
   spec.homepage = 'http://github.com/markryall/dir_sync'
  
@@ -18,8 +18,7 @@ EOF
 
   spec.required_ruby_version = '>= 1.9'
 
-  spec.executables << 'dir_sync'
-  spec.executables << 'drain'
+  spec.executables ['dir_sync', 'drain']
 
   spec.add_development_dependency 'rake', '~>0'
   spec.add_development_dependency 'rspec', '~>2'

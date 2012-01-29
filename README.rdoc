@@ -14,10 +14,13 @@ in subsequent synchronisations to detect deletions.  You can then review the com
 before executing them (in case they seem likely to do something undesirable). Note that
 files that differ only in modification time will be overwritten with the most recent one.
 
-    drain script
+    drain script1 script2
 
-This simply runs each line in the specified script.  As each line is executed, a new script is
-produced.  The purpose of this is to allow the script to be interrupted and able to resume.
+This simply runs each line in the specified scripts rewriting the script as each
+command is succesfully executed. This is just so if the script is interrupted or
+killed, you can resume.  Note that the new file will be written to a temp file first
+(in case the rewriting is interrupted), each command must appear on a single line
+and it is likely that the command interrupted will be rexecuted.
 
 Together, these scripts can be used as follows:
 
