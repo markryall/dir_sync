@@ -1,6 +1,9 @@
 require 'pathname'
 
-class Traverser
+module DirSync
+end
+
+class DirSync::Traverser
   attr_reader :base
 
   TOLERANCE=5

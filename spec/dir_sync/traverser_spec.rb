@@ -1,11 +1,11 @@
 $: << File.dirname(__FILE__)+'/../lib'
 
-require 'traverser'
+require 'dir_sync/traverser'
 
-describe Traverser do
+describe DirSync::Traverser do
   let(:pathname) { stub 'pathname', mkpath: nil, find: nil}
   let(:file_system) { stub 'file_system'}
-  let(:traverser) { Traverser.new 'a', file_system }
+  let(:traverser) { DirSync::Traverser.new 'a', file_system }
 
   before do
     Pathname.should_receive(:new).with('a').and_return pathname

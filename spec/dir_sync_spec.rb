@@ -12,8 +12,8 @@ describe DirSync do
   before do
     DirSync::ChangeLogFileSystem.should_receive(:new).with($stdout).and_return file_system
     HistoricalTraverser.should_receive(:new).with('test').and_return history
-    Traverser.should_receive(:new).with('a', file_system).and_return traverser_a
-    Traverser.should_receive(:new).with('b', file_system).and_return traverser_b
+    DirSync::Traverser.should_receive(:new).with('a', file_system).and_return traverser_a
+    DirSync::Traverser.should_receive(:new).with('b', file_system).and_return traverser_b
     ChangeResolver.should_receive(:new).with(history, traverser_a, traverser_b).and_return resolver
   end
 
