@@ -2,5 +2,5 @@
 
 $: << File.dirname(__FILE__)+'/../lib'
 
-require 'synchroniser'
-Synchroniser.iterate *ARGV
+require 'dir_sync'
+DirSync.sync *ARGV

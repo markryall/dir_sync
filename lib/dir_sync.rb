@@ -3,8 +3,8 @@ require 'historical_traverser'
 require 'change_resolver'
 require 'change_log_file_system'
 
-module Synchroniser
-  def self.iterate name, *paths
+module DirSync
+  def self.sync name, *paths
     if paths.count < 2
       puts "usage: #{__FILE__} name directory1 directory2 ..."
       puts " set DEBUG for verbose output"
