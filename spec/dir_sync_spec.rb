@@ -10,7 +10,7 @@ describe DirSync do
   let(:traverser_b) { stub 'traverser_b' }
 
   before do
-    ChangeLogFileSystem.should_receive(:new).with($stdout).and_return file_system
+    DirSync::ChangeLogFileSystem.should_receive(:new).with($stdout).and_return file_system
     HistoricalTraverser.should_receive(:new).with('test').and_return history
     Traverser.should_receive(:new).with('a', file_system).and_return traverser_a
     Traverser.should_receive(:new).with('b', file_system).and_return traverser_b

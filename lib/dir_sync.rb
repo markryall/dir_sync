@@ -1,7 +1,7 @@
+require 'dir_sync/change_log_file_system'
 require 'traverser'
 require 'historical_traverser'
 require 'change_resolver'
-require 'change_log_file_system'
 
 module DirSync
   def self.sync name, *paths
@@ -10,7 +10,7 @@ module DirSync
       puts " set DEBUG for verbose output"
       exit 1
     end
-    file_system = ChangeLogFileSystem.new $stdout
+    file_system = DirSync::ChangeLogFileSystem.new $stdout
     traversers = paths.map {|path| Traverser.new path, file_system }
     history = HistoricalTraverser.new name
     resolver = ChangeResolver.new history, *traversers

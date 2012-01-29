@@ -1,4 +1,7 @@
-class ChangeLogFileSystem
+module DirSync
+end
+
+class DirSync::ChangeLogFileSystem
   def initialize io
     @io = io
   end
