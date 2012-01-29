@@ -1,4 +1,7 @@
-class HistoricalTraverser
+module DirSync
+end
+
+class DirSync::HistoryTraverser
   attr_reader :name, :ts, :base, :description
   REGEXP = /:(\d+)$/
 

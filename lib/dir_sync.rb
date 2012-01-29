@@ -1,6 +1,6 @@
 require 'dir_sync/change_log_file_system'
 require 'dir_sync/traverser'
-require 'historical_traverser'
+require 'dir_sync/history_traverser'
 require 'change_resolver'
 
 module DirSync
@@ -12,7 +12,7 @@ module DirSync
     end
     file_system = DirSync::ChangeLogFileSystem.new $stdout
     traversers = paths.map {|path| DirSync::Traverser.new path, file_system }
-    history = HistoricalTraverser.new name
+    history = DirSync::HistoryTraverser.new name
     resolver = ChangeResolver.new history, *traversers
     loop { break unless resolver.iterate }
     history.close
