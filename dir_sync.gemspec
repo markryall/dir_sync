@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
 Multidirectional directory synchronisation for any number of directories
 EOF
 
-  spec.authors ['Mark Ryall','James Ottaway']
+  spec.authors = ['Mark Ryall','James Ottaway']
   spec.email = 'mark@ryall.name'
   spec.homepage = 'http://github.com/markryall/dir_sync'
  
