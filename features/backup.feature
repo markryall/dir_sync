@@ -22,11 +22,9 @@ Scenario: Syncing two non existant directories
   And a directory named "b" should exist
 
 Scenario: Syncing a single file from left to right
-  Given a directory named "a"
-  And I write to "a/readme.txt" with:
-  """
-  The content
-  """
+  Given the file system:
+  | path         | time |
+  | a/readme.txt | 1000 |
   When I successfully run `dir_sync test a b`
   Then the stdout should contain exactly:
   """
@@ -35,11 +33,9 @@ Scenario: Syncing a single file from left to right
   """
 
 Scenario: Syncing a single file from right to left
-  Given a directory named "b"
-  And I write to "b/readme.txt" with:
-  """
-  The content
-  """
+  Given the file system:
+  | path         | time |
+  | b/readme.txt | 1000 |
   When I successfully run `dir_sync test a b`
   Then the stdout should contain exactly:
   """
