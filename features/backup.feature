@@ -70,3 +70,20 @@ Scenario: Detecting a deletion from past history
   rm "b/readme.txt"
 
   """
+ 
+ Scenario: Delete all copies of a file that has been removed
+   Given the file system:
+   | path         | time |
+   | a/readme.txt | 1000 |
+   | b/readme.txt | 1000 |
+   And past synchronisation history:
+   | path         | time |
+   | readme.txt   | 1000 |
+   When I successfully run `dir_sync test a b c`
+   Then the stdout should contain exactly:
+   """
+   rm "a/readme.txt"
+   rm "b/readme.txt"
+
+   """
+ 

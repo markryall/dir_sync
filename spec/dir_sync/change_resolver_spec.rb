@@ -100,6 +100,7 @@ describe DirSync::ChangeResolver do
       traversers[0].should_receive(:equivalent?).with(traversers[0]).and_return true
       traversers[0].should_receive(:equivalent?).with(traversers[1]).and_return false
       traversers[0].should_receive :rm
+      traversers[2].should_receive :rm
       resolver.iterate
     end
 

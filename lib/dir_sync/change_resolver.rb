@@ -32,7 +32,7 @@ private
   end
 
   def rm traverser
-    traverser.rm
+    @traversers.select{|t| t.name == traverser.name}.each &:rm
   end
 
   def cp traverser
