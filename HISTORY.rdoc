@@ -1,3 +1,8 @@
+= 0.1.2 Mon 30 Jan 2012 11:32:36 EST
+
+* fixed problem where only one instance of a file was being removed
+* fixed problem where files already in sync were not written to history
+
 = 0.1.1 Sun 29 Jan 2012 14:40:03 EST
 
 * moved everything into a DirSync module to prevent any namespace collisions.
