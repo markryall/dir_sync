@@ -41,6 +41,7 @@ private
   end
 
   def ignore traverser
+    @history.report traverser
   end
 
   def report_traversers

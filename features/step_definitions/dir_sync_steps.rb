@@ -20,3 +20,12 @@ Given /^past synchronisation history:$/ do |table|
     end
   end
 end
+
+Then /^the synchronisation history should be:$/ do |table|
+  home = File.expand_path '~'
+  history = table.hashes.inject '' do |acc,row|
+    path, time = row['path'], row['time'].to_i
+    "#{acc}#{path}:#{time}\n"
+  end
+  File.read("#{home}/.dir_sync/test").should == history
+end

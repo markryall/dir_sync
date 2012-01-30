@@ -56,6 +56,9 @@ Scenario: Do nothing when files are already in sync with history
   """
 
   """
+  And the synchronisation history should be:
+  | path         | time |
+  | readme.txt   | 1000 |  
 
 Scenario: Detecting a deletion from past history
   Given the file system:
