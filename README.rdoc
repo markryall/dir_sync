@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/markryall/dir_sync.png)](http://travis-ci.org/markryall/dir_sync)
+{<img src="https://secure.travis-ci.org/markryall/dir_sync.png" />}[http://travis-ci.org/markryall/dir_sync]
 
 = dir_sync
 
